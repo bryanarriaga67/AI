@@ -1,5 +1,6 @@
 import sys
 import time
+from collections import deque
 
 #Node class
 class Node:
@@ -49,61 +50,64 @@ def generate_successor_nodes(current_node, map_representation, dimension):
 
     return successor_nodes
 
-def breadth_first_search(starting_node, goal_coordinate, map_representation, dimension, cuttoff_time):
-    #Keep track of visited states
-    explored = []
-    #Queue that will store successor nodes
-    queue = [starting_node]
-    max_num_nodes = list()
+def breadth_first_search(starting_node, goal_coordinate, map_representation, dimension, cutoff_time):
+    # Keep track of visited states
+    explored = set()
+    # Keep track of states coordinates in queue for faster look up
+    queue_coordinate_set = set()
+    # Queue that will store successor nodes
+    queue = deque([starting_node])
+    max_num_nodes = []
     start_time = time.time()
-    while len(queue) != 0:
-        #Store num nodes in memory
+    
+    while queue:
+        # Store the number of nodes in memory
         max_num_nodes.append(len(queue))
-        current_node = queue.pop(0)
-        #Add current node to explored list
-        explored.append(current_node.coordinate)
-
+        current_node = queue.popleft()  # Dequeue the first node
+        queue_coordinate_set.discard(tuple(current_node.coordinate)) #Dequeue coordinate of current node
+        
         # Check if the elapsed time exceeds the cutoff
         current_time = time.time()
         elapsed_time_ms = (current_time - start_time) * 1000
-        if elapsed_time_ms > float(cuttoff_time*1000):
-            print("Goal Node not found")
-            return None  # You can choose how to handle the termination
+        if elapsed_time_ms > float(cutoff_time) * 1000:
+            print("Goal Node not found within the cutoff time.")
+            return None  # Terminate the search if the cutoff time is exceeded
         
-
+        # Add current node to explored set
+        explored.add(tuple(current_node.coordinate))
+        
+        if current_node.coordinate == goal_coordinate:
+            # Goal node found, reconstruct the path
+            path = [current_node.coordinate]
+            path_cost = current_node.cost
+            while current_node.parent_node is not None:
+                current_node = current_node.parent_node
+                path.append(current_node.coordinate)
+                path_cost += current_node.cost
+            path.reverse()  # Reverse the path to get it in the correct order
+            
+            end_time = time.time()  # Record the end time
+            runtime_ms = (end_time - start_time) * 1000
+            print("1) Cost of path:", path_cost)
+            print("2) Number of nodes expanded:", len(explored))
+            print("3) Maximum number of nodes in memory:", max(max_num_nodes))
+            print("4) Runtime of algorithm:", runtime_ms, "milliseconds")
+            print("5) Path:", path)
+            return path
+        
         for successor_node in generate_successor_nodes(current_node, map_representation, dimension):
-            #Check for repeated states
-            if successor_node.coordinate not in explored:
-                if successor_node.coordinate == goal_coordinate:
-                    #Store coordinate of goal node
-                    path = [successor_node.coordinate]
-                    #store cost to get to goal node from current node
-                    path_cost = successor_node.cost
-                    #move to goal node
-                    current_node = successor_node
-                    #backtrack to starting node and break once there
-                    while current_node.parent_node is not None:
-                        #go back to parent node from goal node
-                        current_node = current_node.parent_node
-                        #add current coordinate to path list
-                        path.append(current_node.coordinate)
-                        #add up cost to get to goal node
-                        path_cost += current_node.cost
-                    #reverse list of path cooridnates
-                    path = path[::-1]
-                    end_time = time.time()  # Record the end time
-                    runtime_ms = (end_time - start_time) * 1000 
-                    print("1) Cost of path:", path_cost)
-                    print("2) Number of nodes expanded:", len(explored))
-                    print("3) Maximum number of nodes in memory: ", max(max_num_nodes))
-                    print("4) Runtime of algorithm:", runtime_ms, "milliseconds")
-                    print("5) Path:", path)
-                    return
-                #push successor nodes into queue
-                queue.append(successor_node)
+            # Check for repeated states
+            if tuple(successor_node.coordinate) not in explored  and tuple(successor_node.coordinate) not in queue_coordinate_set:
+                queue.append(successor_node)  # Enqueue successor nodes
+                queue_coordinate_set.add(tuple(successor_node.coordinate))
+
+    # If the loop completes without finding the goal, no path exists
+    print("Goal Node not found")
+    return None
+
 
 if len(sys.argv) != 4:
-    print("Usage: python3 PA1.py <filename> <search algorithm> <cutoff time in seconds")
+    print("Usage: python3 PA1.py <filename> <search algorithm> <cutoff time in seconds>")
     sys.exit(1)
 #Initialze variables
 filename = sys.argv[1]
@@ -131,7 +135,6 @@ with open(filename, 'r') as file:
             map_representation.append(line)
 
 if search_algorithm == 'BFS':
-    print('hi')
     breadth_first_search(starting_node, goal_coordinate, map_representation, dimension,cutoff_time)
         
 
