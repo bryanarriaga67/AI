@@ -107,6 +107,7 @@ def breadth_first_search(starting_node, goal_coordinate, map_representation, dim
     print("Goal Node not found")
     print("Cost of Path: -1")
     print("Number of nodes expanded:", len(explored))
+    print("Maximum number of nodes in memory:", max(max_num_nodes))
     print("Runtime of algorithm:", runtime_ms, "Milliseconds")
     print("Path: NULL")
     return None
