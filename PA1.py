@@ -102,7 +102,13 @@ def breadth_first_search(starting_node, goal_coordinate, map_representation, dim
                 queue_coordinate_set.add(tuple(successor_node.coordinate))
 
     # If the loop completes without finding the goal, no path exists
+    end_time = time.time()  # Record the end time
+    runtime_ms = (end_time - start_time) * 1000
     print("Goal Node not found")
+    print("Cost of Path: -1")
+    print("Number of nodes expanded:", len(explored))
+    print("Runtime of algorithm:", runtime_ms, "Milliseconds")
+    print("Path: NULL")
     return None
 
 
