@@ -57,13 +57,15 @@ def breadth_first_search(starting_node, goal_coordinate, map_representation, dim
     queue_coordinate_set = set()
     # Queue that will store successor nodes
     queue = deque([starting_node])
+    #list to keep track of max number of nodes
     max_num_nodes = []
     start_time = time.time()
     
     while queue:
         # Store the number of nodes in memory
         max_num_nodes.append(len(queue))
-        current_node = queue.popleft()  # Dequeue the first node
+        #Popping current node from queue
+        current_node = queue.popleft()
         queue_coordinate_set.discard(tuple(current_node.coordinate)) #Dequeue coordinate of current node
         
         # Check if the elapsed time exceeds the cutoff
