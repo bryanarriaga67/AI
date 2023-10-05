@@ -1,4 +1,4 @@
-# CS 4320 
+# CS 4320 - Aaron Cardiel & Bryan Arriaga
 ## Programming assignment 1: Search and Pathfinding
 
 Run in terminal.

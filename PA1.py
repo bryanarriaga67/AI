@@ -1,3 +1,9 @@
+'''
+CS 4320 - PA1 PT1
+Aaron Cardiel
+Bryan Arriaga
+'''
+
 import sys
 import time
 from collections import deque
