@@ -120,6 +120,8 @@ def breadth_first_search(starting_node, goal_coordinate, map_representation, dim
     print("Path: NULL")
     return None
 
+def depth_limited_search(starting_node, goal_coordinate, map_representation, dimension, cutoff_time):
+    pass
 
 if len(sys.argv) != 4:
     print("Usage: python3 PA1.py <filename> <search algorithm> <cutoff time in seconds>")
@@ -152,7 +154,8 @@ with open(filename, 'r') as file:
 if search_algorithm == 'BFS':
     breadth_first_search(starting_node, goal_coordinate, map_representation, dimension,cutoff_time)
         
-
+if search_algorithm == 'IDS':
+    depth_limited_search(starting_node, goal_coordinate, map_representation, dimension, cutoff_time)
         
     
 
