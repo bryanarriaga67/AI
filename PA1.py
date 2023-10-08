@@ -192,6 +192,10 @@ def depth_limited_search(starting_node, goal_coordinate, map_representation, dim
     print("Path: NULL")
     return None
 
+def manhattan_distance(coordinate1, coordinate2):
+    # Calculate the Manhattan distance between two coordinates
+    return abs(coordinate1[0] - coordinate2[0]) + abs(coordinate1[1] - coordinate2[1])
+
 def A_star_search(starting_node, goal_coordinate, map_representation, dimension, cutoff_time):
     # Keep track of visited states
     explored = set()
@@ -239,10 +243,13 @@ def A_star_search(starting_node, goal_coordinate, map_representation, dimension,
             print("5) Path:", path)
             return path
 
-        
         for successor_node in generate_successor_nodes(current_node, map_representation, dimension):
             # Check for repeated states
             if tuple(successor_node.coordinate) not in explored:
+                # Calculate the Manhattan distance heuristic from the successor to the goal
+                heuristic_cost = manhattan_distance(successor_node.coordinate, goal_coordinate)
+                # Update the cost of the successor node with the heuristic cost
+                successor_node.cost += heuristic_cost
                 heapq.heappush(open_list, successor_node)  # Push successor nodes onto the priority queue
 
     # If the loop completes without finding the goal, no path exists
